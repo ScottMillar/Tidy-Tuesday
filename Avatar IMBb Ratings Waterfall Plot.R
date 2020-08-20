@@ -11,6 +11,8 @@ avatar <- tuesdata$avatar
 scenes <- tuesdata$scene_description
 
 import_avatar()
+library(extrafont)
+loadfonts()
 
 avatar_data <- avatar %>%
   mutate(
@@ -71,11 +73,11 @@ avatar_data %>%
   ) +
   annotate(
     geom = "text",
-    x = 10,
+    x = 8,
     y = 9.8,
     label = "God i LOVE these\ncurved arrows\ndefinitely won't abuse them",
     family = "Slayer",
-    size = 3, fontface = 2 
+    size = 2, fontface = 2 
   ) +
   annotate(
     "curve",
@@ -92,7 +94,7 @@ avatar_data %>%
     x = "",
     y = "IMDb Rating",
     title = "IMDb Ratings for Avatar",
-    caption = "Data from {appa} (https://github.com/averyrobbins1/appa)\n Visualisation by Jack Davison (Twitter @JDavison_)\nCode found at github.com/jack-davison"
+    caption = "Data from {appa} (https://github.com/averyrobbins1/appa)\nCode found at github.com/jack-davison"
   ) +
   theme_avatar(text.font = "Slayer") +
   theme(
