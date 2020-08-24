@@ -66,7 +66,7 @@ avatar_data %>%
   ) +
   scale_color_manual(values = c(
     "Anthony Lioi" = "#8B5B45",
-    "Ethan Spaulding" = "#C7C45E",
+    "Ethan Spaulding" = "#00916E",
     "Joaquim Dos Santos" = "#EEB05A",
     "Michael Dante DiMartino" = "#25351C",
     "Dave Filoni" = "#a10000",
