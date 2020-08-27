@@ -1,5 +1,8 @@
 install.packages("tidytuesdayR")
 install.packages("tidytext")
+install.packages("widyr")
+install.packages("ggraph")
+install.packages("tidygraph")
 library(tidyverse)
 library(tidytuesdayR)
 library(tidytext)
@@ -7,6 +10,9 @@ library(scales)
 library(dplyr)
 library(ggplot2)
 library(glue)
+library(widyr)
+library(ggraph)
+library(tidygraph)
 
 tuesdata<-tidytuesdayR::tt_load('2020-08-25')
 
@@ -70,5 +76,55 @@ ingredients %>%
        y = "",
        title = "Most common ingredients in Chopped",
        fill = "Course")
+
+ingredients_filtered <- ingredients %>%
+  add_count(ingredient) %>%
+  filter(n >= 8)
+ingredient_correlations <- ingredients_filtered %>%
+  pairwise_cor(ingredient, series_episode, sort = TRUE)
+ingredients_filtered %>%
+  pairwise_count(ingredient, series_episode, sort = TRUE)
+
+ingredient_correlations %>%
+  head(75) %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = correlation)) +
+  geom_node_point() +
+  geom_node_text(aes(label = name), repel = TRUE)
+
+ingredients_filtered %>%
+  unite(episode_course, series_episode, course) %>%
+  pairwise_count(ingredient, episode_course, sort = TRUE)
+
+early_late_ingredients <- ingredients_filtered %>%
+  group_by(ingredient) %>%
+  summarize(first_season = min(season),
+            avg_season = mean(season),
+            last_season = max(season),
+            n_appearances = n()) %>%
+  arrange(desc(avg_season)) %>%
+  slice(c(1:6, tail(row_number())))
+
+
+ingredients_filtered %>%
+  semi_join(early_late_ingredients, by = "ingredient") %>%
+  mutate(ingredient = fct_reorder(ingredient, season)) %>%
+  ggplot(aes(season, ingredient)) +
+  geom_boxplot(aes(fill = ingredient)) +
+  scale_fill_manual(values = c(
+    "passion fruit" = "darkorange",
+    "shishito peppers" = "green3",
+    "fava beans" = "palegreen",
+    "bok choy" = "springgreen4",
+    "rambutan" = "red2",
+    "figs" = "plum4",
+    "sour cream" = "lemonchiffon",
+    "collard greens" = "darkolivegreen",
+    "walnuts" = "chocolate3",
+    "jumbo shrimp" = "pink2",
+    "baby turnips" = "mistyrose",
+    "jicama" = "burlywood"
+  ))
+
 
 
